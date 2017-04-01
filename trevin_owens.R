@@ -23,8 +23,15 @@ owens_data <- subset(owens_data, Country!="English" & Country!="#N/A")
 owens_data <- droplevels(owens_data)
 
 # group countries by region
-levels <- c(c("Colombia", "Dominica", "Dominican Republic", "Cuba"),
-            c("Czech Republic", "Cyprus", "Croatia", "Denmark")
-            c("Comoros", "Brazzaville", "Kinshasa", "Djibouti"))
+SA <- c("Colombia", "Dominica", "Dominican Republic", "Cuba")
+EU <- c("Czech Republic", "Cyprus", "Croatia", "Denmark")
+AF <- c("Comoros", "Brazzaville", "Kinshasa", "Djibouti")
+
+sa.df <- owens_data[owens_data$Country %in% SA,]
+eu.df <- owens_data[owens_data$Country %in% EU,]
+af.df <- owens_data[owens_data$Country %in% AF,]
+
+# combine into new dataframe
+df <- rbind(af.df, eu.df, sa.df)
 
 
