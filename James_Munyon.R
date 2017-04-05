@@ -397,6 +397,8 @@ pacf(Africa_Misc$total, lag.max = length(Africa_Misc$total) - 1)
 
 AM_arima = arima(Africa_Misc$total[1:97], order = c(1, 0, 0), seasonal = list(order = c(1, 0, 0), period = 52))
 
+###################
+
 ## new idea: product/country combinations with a significant amount of data
 OI %>% subset(Production.Category == "WINE" & Ship.to.Country.Name == "Colombia") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Colombia.Wine
 plot(Colombia.Wine$total, pch = 16, type = "o")
@@ -476,4 +478,223 @@ plot(DRC.Wine$total, pch = 16, type = "o")
 acf(DRC.Wine$total, lag.max = 104)
 pacf(DRC.Wine$total, lag.max = 104)
 
+save.image("./Some_country_subsets.RData")
 ## we have many Colombia subsets now, many DRC (Democratic Republic of the Congo) subsets now, and a Congo Miscellaneous subset that would need some weeks combined (maybe two weeks at a time?)
+
+## 4/4
+load("./Some_country_subsets.RData")
+library(LearnEDA); library(aplpack)
+
+## Colombia.Beer
+plot(Colombia.Beer$total, pch = 16, type = "o", main = "Colombia.Beer")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_Colombia.Beer = smooth(Colombia.Beer$total, kind = "3RSS", twiceit = TRUE)
+smooth_Colombia.Beer = han(smooth_Colombia.Beer)
+rough_Colombia.Beer = Colombia.Beer$total - smooth_Colombia.Beer
+plot(smooth_Colombia.Beer, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Beer")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_Colombia.Beer), pch = 16, main = "Smooth.Colombia.Beer.Residuals")
+abline(h = 0, col = "blue")
+
+## Colombia.Food
+plot(Colombia.Food$total, pch = 16, type = "o", main = "Colombia.Food")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_Colombia.Food = smooth(Colombia.Food$total, kind = "3RSS", twiceit = TRUE)
+smooth_Colombia.Food = han(smooth_Colombia.Food)
+rough_Colombia.Food = Colombia.Food$total - smooth_Colombia.Food
+plot(smooth_Colombia.Food, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Food")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_Colombia.Food), pch = 16, main = "Smooth.Colombia.Food.Residuals")
+abline(h = 0, col = "blue")
+
+## Colombia.NAB
+plot(Colombia.NAB$total, pch = 16, type = "o", main = "Colombia.NAB")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_Colombia.NAB = smooth(Colombia.NAB$total, kind = "3RSS", twiceit = TRUE)
+smooth_Colombia.NAB = han(smooth_Colombia.NAB)
+rough_Colombia.NAB = Colombia.NAB$total - smooth_Colombia.NAB
+plot(smooth_Colombia.NAB, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.NAB")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_Colombia.NAB), pch = 16, main = "Smooth.Colombia.NAB.Residuals")
+abline(h = 0, col = "blue")
+
+## Colombia.Spirits
+plot(Colombia.Spirits$total, pch = 16, type = "o", main = "Colombia.Spirits")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_Colombia.Spirits = smooth(Colombia.Spirits$total, kind = "3RSS", twiceit = TRUE)
+smooth_Colombia.Spirits = han(smooth_Colombia.Spirits)
+rough_Colombia.Spirits = Colombia.Spirits$total - smooth_Colombia.Spirits
+plot(smooth_Colombia.Spirits, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Spirits")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_Colombia.Spirits), pch = 16, main = "Smooth.Colombia.Spirits.Residuals")
+abline(h = 0, col = "blue")
+
+## Colombia.Wine
+plot(Colombia.Wine$total, pch = 16, type = "o", main = "Colombia.Wine")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_Colombia.Wine = smooth(Colombia.Wine$total, kind = "3RSS", twiceit = TRUE)
+smooth_Colombia.Wine = han(smooth_Colombia.Wine)
+rough_Colombia.Wine = Colombia.Wine$total - smooth_Colombia.Wine
+plot(smooth_Colombia.Wine, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Wine")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_Colombia.Wine), pch = 16, main = "Smooth.Colombia.Wine.Residuals")
+abline(h = 0, col = "blue")
+
+## Congo.Misc (needs grouped a bit, maybe?)
+dotchart(unique(Congo.Misc$Week.ID), pch = 16, xlim = c(1, 105))
+abline(v = seq(0.5, 104.5, by = 4), col = "red")
+
+## DRC.Beer
+plot(DRC.Beer$total, pch = 16, type = "o", main = "DRC.Beer")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_DRC.Beer = smooth(DRC.Beer$total, kind = "3RSS", twiceit = TRUE)
+smooth_DRC.Beer = han(smooth_DRC.Beer)
+rough_DRC.Beer = DRC.Beer$total - smooth_DRC.Beer
+plot(smooth_DRC.Beer, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Beer")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_DRC.Beer), pch = 16, main = "Smooth.DRC.Beer.Residuals")
+abline(h = 0, col = "blue")
+
+## DRC.Food
+plot(DRC.Food$total, pch = 16, type = "o", main = "DRC.Food")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_DRC.Food = smooth(DRC.Food$total, kind = "3RSS", twiceit = TRUE)
+smooth_DRC.Food = han(smooth_DRC.Food)
+rough_DRC.Food = DRC.Food$total - smooth_DRC.Food
+plot(smooth_DRC.Food, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Food")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_DRC.Food), pch = 16, main = "Smooth.DRC.Food.Residuals")
+abline(h = 0, col = "blue")
+
+## DRC.Misc
+plot(DRC.Misc$total, pch = 16, type = "o", main = "DRC.Misc")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_DRC.Misc = smooth(DRC.Misc$total, kind = "3RSS", twiceit = TRUE)
+smooth_DRC.Misc = han(smooth_DRC.Misc)
+rough_DRC.Misc = DRC.Misc$total - smooth_DRC.Misc
+plot(smooth_DRC.Misc, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Misc")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_DRC.Misc), pch = 16, main = "Smooth.DRC.Misc.Residuals")
+abline(h = 0, col = "blue")
+
+## DRC.NAB
+plot(DRC.NAB$total, pch = 16, type = "o", main = "DRC.NAB")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_DRC.NAB = smooth(DRC.NAB$total, kind = "3RSS", twiceit = TRUE)
+smooth_DRC.NAB = han(smooth_DRC.NAB)
+rough_DRC.NAB = DRC.NAB$total - smooth_DRC.NAB
+plot(smooth_DRC.NAB, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.NAB")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_DRC.NAB), pch = 16, main = "Smooth.DRC.NAB.Residuals")
+abline(h = 0, col = "blue")
+
+## DRC.Spirits
+plot(DRC.Spirits$total, pch = 16, type = "o", main = "DRC.Spirits")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_DRC.Spirits = smooth(DRC.Spirits$total, kind = "3RSS", twiceit = TRUE)
+smooth_DRC.Spirits = han(smooth_DRC.Spirits)
+rough_DRC.Spirits = DRC.Spirits$total - smooth_DRC.Spirits
+plot(smooth_DRC.Spirits, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Spirits")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_DRC.Spirits), pch = 16, main = "Smooth.DRC.Spirits.Residuals")
+abline(h = 0, col = "blue")
+
+## DRC.Wine
+plot(DRC.Wine$total, pch = 16, type = "o", main = "DRC.Wine")
+abline(v = seq(13, 104, by = 13), col = "blue")
+smooth_DRC.Wine = smooth(DRC.Wine$total, kind = "3RSS", twiceit = TRUE)
+smooth_DRC.Wine = han(smooth_DRC.Wine)
+rough_DRC.Wine = DRC.Wine$total - smooth_DRC.Wine
+plot(smooth_DRC.Wine, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Wine")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(as.vector(rough_DRC.Wine), pch = 16, main = "Smooth.DRC.Wine.Residuals")
+abline(h = 0, col = "blue")
+
+## Dusky Gull
+library(dplyr)
+OI %>% subset(Customer.Name == "Dusky gull") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Dusky.Gull
+plot(Dusky.Gull$total, pch = 16, type = "o")
+
+## have 10 plots
+par(mfrow = c(4, 3))
+plot(smooth_Colombia.Beer, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Beer")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_Colombia.Food, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Food")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_Colombia.NAB, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.NAB")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_Colombia.Spirits, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Spirits")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_Colombia.Wine, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Wine")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_DRC.Beer, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Beer")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_DRC.Food, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Food")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_DRC.Misc, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Misc")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_DRC.NAB, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.NAB")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_DRC.Spirits, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Spirits")
+abline(v = seq(13, 104, by = 13), col = "blue")
+plot(smooth_DRC.Wine, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Wine")
+abline(v = seq(13, 104, by = 13), col = "blue")
+
+## overlays?
+par(mfrow = c(3, 2))
+plot(smooth_Colombia.Beer, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Beer")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = Colombia.Beer$total, pch = 16)
+plot(smooth_Colombia.Food, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Food")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = Colombia.Food$total, pch = 16)
+plot(smooth_Colombia.NAB, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.NAB")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = Colombia.NAB$total, pch = 16)
+plot(smooth_Colombia.Spirits, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Spirits")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = Colombia.Spirits$total, pch = 16)
+plot(smooth_Colombia.Wine, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.Colombia.Wine")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = Colombia.Wine$total, pch = 16)
+par(mfrow = c(3, 2))
+plot(smooth_DRC.Beer, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Beer")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = DRC.Beer$total, pch = 16)
+plot(smooth_DRC.Food, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Food")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = DRC.Food$total, pch = 16)
+plot(smooth_DRC.Misc, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Misc")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = DRC.Misc$total, pch = 16)
+plot(smooth_DRC.NAB, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.NAB")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = DRC.NAB$total, pch = 16)
+plot(smooth_DRC.Spirits, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Spirits")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = DRC.Spirits$total, pch = 16)
+plot(smooth_DRC.Wine, pch = 16, type = "l", col = "red", lwd = 2, main = "Smooth.DRC.Wine")
+abline(v = seq(13, 104, by = 13), col = "blue")
+points(x = 1:105, y = DRC.Wine$total, pch = 16)
+
+## coefficients of variation
+cv_Colombia.Beer = sd(Colombia.Beer$total)/mean(Colombia.Beer$total)
+cv_Colombia.Food = sd(Colombia.Food$total)/mean(Colombia.Food$total)
+cv_Colombia.NAB = sd(Colombia.NAB$total)/mean(Colombia.NAB$total)
+cv_Colombia.Spirits = sd(Colombia.Spirits$total)/mean(Colombia.Spirits$total)
+cv_Colombia.Wine = sd(Colombia.Wine$total)/mean(Colombia.Wine$total)
+Colombia.cvs = c(cv_Colombia.Beer, cv_Colombia.Food, cv_Colombia.NAB, cv_Colombia.Spirits, cv_Colombia.Wine)
+names(Colombia.cvs) = c("Beer", "Food", "NAB", "Spirits", "Wine")
+
+cv_DRC.Beer = sd(DRC.Beer$total)/mean(DRC.Beer$total)
+cv_DRC.Food = sd(DRC.Food$total)/mean(DRC.Food$total)
+cv_DRC.Misc = sd(DRC.Misc$total)/mean(DRC.Misc$total)
+cv_DRC.NAB = sd(DRC.NAB$total)/mean(DRC.NAB$total)
+cv_DRC.Spirits = sd(DRC.Spirits$total)/mean(DRC.Spirits$total)
+cv_DRC.Wine = sd(DRC.Wine$total)/mean(DRC.Wine$total)
+DRC.cvs = c(cv_DRC.Beer, cv_DRC.Food, cv_DRC.Misc, cv_DRC.NAB, cv_DRC.Spirits, cv_DRC.Wine)
+names(DRC.cvs) = c("Beer", "Food", "Misc", "NAB", "Spirits", "Wine")
+
+Colombia.cvs; DRC.cvs
+
+write.csv("./OI_data_fixed_country_names.csv", row.names = FALSE)
