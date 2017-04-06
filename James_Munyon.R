@@ -695,6 +695,58 @@ cv_DRC.Wine = sd(DRC.Wine$total)/mean(DRC.Wine$total)
 DRC.cvs = c(cv_DRC.Beer, cv_DRC.Food, cv_DRC.Misc, cv_DRC.NAB, cv_DRC.Spirits, cv_DRC.Wine)
 names(DRC.cvs) = c("Beer", "Food", "Misc", "NAB", "Spirits", "Wine")
 
+OI %>% group_by(Week.ID, Production.Category, Ship.to.Country.Name) %>% summarise(total = sum(Pieces)) %>% group_by(Production.Category, Ship.to.Country.Name) %>% summarise(mean = mean(total)) -> means
+
+OI %>% group_by(Week.ID, Production.Category, Ship.to.Country.Name) %>% summarise(total = sum(Pieces)) %>% group_by(Production.Category, Ship.to.Country.Name) %>% summarise(sd = sd(total)) -> sds
+
 Colombia.cvs; DRC.cvs
 
-write.csv("./OI_data_fixed_country_names.csv", row.names = FALSE)
+#write.csv(OI, "./OI_data_fixed_country_names.csv", row.names = FALSE)
+
+## Pallav: remove all customers who only had one order
+
+OI %>% group_by(Customer.Name) %>% summarise(order_count = n()) -> order_count
+OI %>% group_by(Customer.Name) %>% count(Customer.Name) -> order_count2
+sum(order_count$order_count == 1)/nrow(order_count) # 4.10%
+sum(order_count$order_count < 30)/nrow(order_count) # 66.52%
+sum(order_count$order_count < 20)/nrow(order_count) # 57.26%
+sum(order_count$order_count < 15)/nrow(order_count) # 49.44%
+sum(order_count$order_count < 10)/nrow(order_count) # 38.69%
+sum(order_count$order_count < 5)/nrow(order_count) # 19.27%
+
+## top frequency customers:
+order_count %>% arrange(desc(order_count))
+
+OI %>% subset(Customer.Name == "Dusky gull") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Dusky.Gull # 93 obs
+setdiff(1:105, unique(Dusky.Gull$Week.ID))
+plot(Dusky.Gull$total, pch = 16, type = "o")
+OI %>% subset(Customer.Name == "Boa, emerald green tree") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Boa # 102 obs
+setdiff(1:105, unique(Boa$Week.ID))
+plot(Boa$total, pch = 16, type = "o")
+OI %>% subset(Customer.Name == "Cat, european wild") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Cat # 104 obs (the only missing one if the first, so the series is still continuous)
+setdiff(1:105, unique(Cat$Week.ID))
+plot(Cat$total, pch = 16, type = "o")
+OI %>% subset(Customer.Name == "Alpaca") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Alpaca # 105 obs
+setdiff(1:105, unique(Alpaca$Week.ID))
+plot(Alpaca$total, pch = 16, type = "o")
+OI %>% subset(Customer.Name == "Agile wallaby") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Agile.Wallaby # 102 obs
+plot(Agile.Wallaby$total, pch = 16, type = "o")
+setdiff(1:105, unique(Agile.Wallaby$Week.ID))
+
+## let's filter out customers who ordered less than 20 times:
+OI %>% left_join(order_count, "Customer.Name") %>% filter(order_count >= 20) %>% droplevels() -> OI_gt_20
+
+OI_gt_20 %>% subset(Production.Category == "BEER" & Ship.to.Country.Name == "DRC") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> DRC.Beer.20
+OI_gt_20 %>% subset(Production.Category == "Food" & Ship.to.Country.Name == "DRC") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> DRC.Food.20
+OI_gt_20 %>% subset(Production.Category == "Miscellaneous" & Ship.to.Country.Name == "DRC") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> DRC.Misc.20
+OI_gt_20 %>% subset(Production.Category == "NAB" & Ship.to.Country.Name == "DRC") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> DRC.NAB.20
+OI_gt_20 %>% subset(Production.Category == "SPIRITS" & Ship.to.Country.Name == "DRC") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> DRC.Spirits.20
+OI_gt_20 %>% subset(Production.Category == "WINE" & Ship.to.Country.Name == "DRC") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> DRC.Wine.20
+
+OI_gt_20 %>% subset(Production.Category == "BEER" & Ship.to.Country.Name == "Colombia") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Colombia.Beer.20
+OI_gt_20 %>% subset(Production.Category == "Food" & Ship.to.Country.Name == "Colombia") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Colombia.Food.20
+OI_gt_20 %>% subset(Production.Category == "NAB" & Ship.to.Country.Name == "Colombia") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Colombia.NAB.20
+OI_gt_20 %>% subset(Production.Category == "SPIRITS" & Ship.to.Country.Name == "Colombia") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Colombia.Spirits.20
+OI_gt_20 %>% subset(Production.Category == "WINE" & Ship.to.Country.Name == "Colombia") %>% group_by(Week.ID) %>% summarise(total = sum(Pieces)) -> Colombia.Wine.20
+
+save.image("./4.5.10.35.PM.RData")
